@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Руководство пользователя - Chatbot Manager</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            border-left: 5px solid #3498db;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .mockup-container {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .mockup-header {
+            background: #e0e0e0;
+            padding: 5px 10px;
+            font-size: 12px;
+            color: #666;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            gap: 5px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #27c93f; }
+        
+        .mockup-content {
+            padding: 20px;
+            background: white;
+            min-height: 200px;
+            position: relative;
+        }
+
+        /* Users Mockup */
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .users-table th {
+            text-align: left;
+            background: #f1f8ff;
+            padding: 8px;
+            border-bottom: 2px solid #ddd;
+        }
+        .users-table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .btn {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+        }
+        .btn-toggle { background: #f39c12; }
+        .btn-delete { background: #e74c3c; }
+
+        /* Editor Mockup */
+        .editor-area {
+            display: flex;
+            height: 250px;
+        }
+        .sidebar {
+            width: 20%;
+            background: #f4f4f4;
+            padding: 10px;
+            border-right: 1px solid #ddd;
+        }
+        .canvas {
+            flex-grow: 1;
+            background: #fff;
+            position: relative;
+            background-image: radial-gradient(#ddd 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .node {
+            width: 120px;
+            height: 80px;
+            background: white;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            position: absolute;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+        .node-header {
+            width: 100%;
+            background: #eaf2f8;
+            text-align: center;
+            padding: 2px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .connector {
+            position: absolute;
+            height: 2px;
+            background: #95a5a6;
+            transform-origin: 0 0;
+        }
+
+        /* Trace Mockup */
+        .trace-list {
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .trace-item {
+            padding: 5px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+        }
+        .inbound {
+            background: #efffef;
+            border-left: 3px solid #2ecc71;
+        }
+        .outbound {
+            background: #eef6ff;
+            border-left: 3px solid #3498db;
+        }
+        .meta {
+            color: #999;
+            font-size: 11px;
+        }
+
+        /* Button to go back or fake link */
+        .nav-link {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Руководство пользователя системы "Chatbot Manager"</h1>
+
+    <div class="section">
+        <p>Добро пожаловать в руководство администратора. Эта система позволяет управлять поведением вашего чат-бота, отслеживать диалоги и управлять списком пользователей через удобный веб-интерфейс.</p>
+        <p>Для доступа к панели управления перейдите по адресу: <br>
+        <code>http://127.0.0.1:8005</code> (локально) или по адресу вашего сервера.</p>
+    </div>
+
+    <div class="section">
+        <h2>1. Управление пользователями</h2>
+        <p>В этом разделе вы можете видеть всех пользователей, которые взаимодействовали с ботом. Вы можете активировать, деактивировать или удалять их.</p>
+        
+        <h3>Интерфейс:</h3>
+        <div class="mockup-container">
+            <div class="mockup-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <span>/users - Admin Panel</span>
+            </div>
+            <div class="mockup-content">
+                <h3>Список пользователей</h3>
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Платформа</th>
+                            <th>Статус</th>
+                            <th>Активен?</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>12345678</td>
+                            <td>telegram</td>
+                            <td><span style="color:green">Active</span></td>
+                            <td>True</td>
+                            <td>
+                                <a href="#" class="btn btn-toggle">Toggle</a>
+                                <a href="#" class="btn btn-delete">Delete</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>87654321</td>
+                            <td>telegram</td>
+                            <td><span style="color:red">Inactive</span></td>
+                            <td>False</td>
+                            <td>
+                                <a href="#" class="btn btn-toggle">Toggle</a>
+                                <a href="#" class="btn btn-delete">Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <h3>Основные действия:</h3>
+        <ul>
+            <li><strong>Toggle (Переключить):</strong> Изменяет статус пользователя (активен/неактивен). Если пользователь неактивен, бот может игнорировать его сообщения (в зависимости от логики).</li>
+            <li><strong>Delete (Удалить):</strong> Полностью удаляет запись о пользователе из базы данных.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>2. Редактор сценариев (Workflow)</h2>
+        <p>Сердце вашего бота. Здесь вы строите логику диалогов, создавая "Блоки" и соединяя их переходами.</p>
+
+        <h3>Интерфейс:</h3>
+        <div class="mockup-container">
+            <div class="mockup-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <span>/workflow - Visual Editor</span>
+            </div>
+            <div class="mockup-content">
+                <div class="editor-area">
+                    <div class="sidebar">
+                        <h4>Инструменты</h4>
+                        <div style="background:#ddd; padding:5px; margin-bottom:5px; border:1px solid #ccc;">+ Новый блок</div>
+                        <div style="font-size:11px; color:#555;">Перетащите блоки для настройки связей.</div>
+                    </div>
+                    <div class="canvas">
+                        <!-- Node 1 -->
+                        <div class="node" style="top: 50px; left: 50px;">
+                            <div class="node-header">Start Block (ID:1)</div>
+                            <div>Приветствие</div>
+                        </div>
+                        
+                        <!-- Connector -->
+                        <div class="connector" style="width: 100px; top: 90px; left: 170px; transform: rotate(15deg);"></div>
+
+                        <!-- Node 2 -->
+                        <div class="node" style="top: 100px; left: 300px;">
+                            <div class="node-header">Menu (ID:2)</div>
+                            <div>Выбор опции</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3>Как это работает:</h3>
+        <ul>
+            <li><strong>Блоки (Nodes):</strong> Каждый прямоугольник - это шаг сценария. У него есть ID и Python-код.</li>
+            <li><strong>Редактирование:</strong> Кликните по блоку, чтобы открыть редактор кода справа. Там вы пишете логику (отправка сообщений, проверка условий).</li>
+            <li><strong>Связи:</strong> Связи (стрелки) определяются командой <code>go_to(ID)</code> в вашем коде. Редактор автоматически рисует их.</li>
+            <li><strong>Команды:</strong> Используйте <code>send_message('text')</code>, <code>scan_input()</code> и <code>go_to(id)</code> внутри блоков.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>3. Логи и Трейс (Trace)</h2>
+        <p>Инструмент отладки. Позволяет видеть историю сообщений между ботом и пользователями в реальном времени.</p>
+
+        <h3>Интерфейс:</h3>
+        <div class="mockup-container">
+            <div class="mockup-header">
+                <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                <span>/trace - Session Logs</span>
+            </div>
+            <div class="mockup-content">
+                <h3>История сообщений</h3>
+                <div class="trace-list">
+                    <div class="trace-item inbound">
+                        <div class="meta">10:42:01 | User: 12345678</div>
+                        <div><strong><-- /start</strong></div>
+                    </div>
+                    <div class="trace-item outbound">
+                        <div class="meta">10:42:02 | Bot</div>
+                        <div><strong>--> Привет! Добро пожаловать.</strong></div>
+                    </div>
+                    <div class="trace-item inbound">
+                        <div class="meta">10:42:15 | User: 12345678</div>
+                        <div><strong><-- Хочу заказать пиццу</strong></div>
+                    </div>
+                    <div class="trace-item outbound">
+                        <div class="meta">10:42:16 | Bot</div>
+                        <div><strong>--> Отлично, какую желаете?</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3>Возможности:</h3>
+        <ul>
+            <li><strong>Фильтрация:</strong> Выберите пользователя из списка сверху, чтобы видеть только его диалог.</li>
+            <li><strong>Просмотр переменных:</strong> Справа отображаются текущие переменные сессии пользователя (например, имя, возраст, статус заказа).</li>
+            <li><strong>Сброс сессии:</strong> Вы можете вручную переключить пользователя на другой блок (например, в начало), если он застрял.</li>
+        </ul>
+    </div>
+
+</body>
+</html>

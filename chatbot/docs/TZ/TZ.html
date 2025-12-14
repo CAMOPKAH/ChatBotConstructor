@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Техническое Задание (ТЗ) - Chatbot Manager</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f4f7f6;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .diagram-container {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .prototype {
+            border: 2px dashed #bdc3c7;
+            padding: 20px;
+            margin: 20px 0;
+            background: #fafafa;
+        }
+
+        /* Prototype Styles */
+        .proto-screen {
+            background: white;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .proto-header {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .proto-sidebar {
+            width: 200px;
+            background: #ecf0f1;
+            border-right: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .proto-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .proto-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .proto-card {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</head>
+
+<body>
+
+    <h1>Техническое Задание на разработку системы "Chatbot Manager"</h1>
+
+    <div class="section">
+        <h2>1. Общее описание</h2>
+        <p>Система <strong>Chatbot Manager</strong> представляет собой платформу для создания, управления и мониторинга
+            чат-ботов с динамической логикой. Ключевая особенность — логика диалогов не хардкодится, а управляется через
+            веб-интерфейс в виде графа блоков.</p>
+    </div>
+
+    <div class="section">
+        <h2>2. Архитектура C4</h2>
+
+        <h3>2.1. Диаграмма контекста (Context Diagram)</h3>
+        <p>Показывает взаимодействие системы с внешними акторами.</p>
+        <div class="diagram-container">
+            <pre class="mermaid">
+            C4Context
+                title System Context Diagram for Chatbot Manager
+
+                Person(admin, "Администратор", "Управляет сценариями и пользователями")
+                Person(user, "Пользователь Бота", "Общается с ботом в мессенджере")
+                
+                System_Boundary(c1, "Chatbot Manager System") {
+                    System(chatbot, "Chatbot Core", "Обрабатывает сообщения и выполняет логику")
+                    System(admin_panel, "Admin Web Panel", "Интерфейс настройки и мониторинга")
+                }
+
+                System_Ext(telegram, "Telegram API", "Платформа обмена сообщениями")
+
+                Rel(admin, admin_panel, "Настраивает (HTTP)")
+                Rel(user, telegram, "Пишет сообщения")
+                Rel(telegram, chatbot, "Пересылает события (Webhook/Polling)")
+                Rel(chatbot, telegram, "Отправляет ответы")
+            </pre>
+        </div>
+
+        <h3>2.2. Диаграмма контейнеров (Container Diagram)</h3>
+        <p>Детализация внутренней структуры системы.</p>
+        <div class="diagram-container">
+            <pre class="mermaid">
+            C4Container
+                title Container Diagram for Chatbot Manager
+
+                Person(admin, "Администратор")
+                
+                System_Boundary(c1, "Chatbot Manager") {
+                    Container(web_app, "Admin Web App", "FastAPI, HTML/Jinja2", "Веб-интерфейс для управления")
+                    Container(bot_engine, "Bot Engine", "Python, Aiogram", "Обработка диалогов и выполнение скриптов")
+                    ContainerDb(database, "Database", "SQLite/PostgreSQL", "Хранение сценариев, пользователей и логов")
+                }
+
+                Rel(admin, web_app, "Использует", "HTTPS")
+                Rel(web_app, database, "Читает/Пишет", "SQLAlchemy")
+                Rel(bot_engine, database, "Читает сценарии/Пишет логи", "SQLAlchemy")
+            </pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>3. Диаграмма потоков данных (DFD)</h2>
+        <p>Показывает, как информация движется через систему.</p>
+        <div class="diagram-container">
+            <pre class="mermaid">
+            flowchart TD
+                User[Пользователь] -->|Сообщение| TG[Telegram]
+                TG -->|Update| Engine[Bot Engine]
+                
+                subgraph Processing
+                    Engine -->|1. Запрос сессии| DB[(Database)]
+                    DB -->|Сессия| Engine
+                    Engine -->|2. Получение кода блока| DB
+                    DB -->|Скрипт| Engine
+                    Engine -->|3. Выполнение скрипта| Sandbox[Code Executor]
+                    Sandbox -->|Логика переходов| Engine
+                end
+                
+                Engine -->|4. Запись логов| DB
+                Engine -->|5. Ответ| TG
+                TG -->|Сообщение| User
+                
+                Admin[Администратор] -->|Редактирование| Panel[Admin Panel]
+                Panel -->|Сохранение блоков| DB
+            </pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>4. ER Диаграмма (Схема Базы Данных)</h2>
+        <p>Структура хранения данных.</p>
+        <div class="diagram-container">
+            <pre class="mermaid">
+            erDiagram
+                BLOCKS {
+                    int id PK
+                    string name
+                    text script_code "Python код логики"
+                    int ui_x
+                    int ui_y
+                    bool is_start
+                }
+                
+                BOT_USERS {
+                    int id PK
+                    string user_id "Telegram ID"
+                    string platform
+                    bool is_active
+                    datetime created_at
+                }
+                
+                USER_SESSIONS {
+                    string user_id PK
+                    int current_block_id FK
+                    datetime updated_at
+                }
+                
+                USER_PARAMS {
+                    int id PK
+                    string user_id
+                    string key
+                    string value
+                }
+                
+                TRACE {
+                    int id PK
+                    string user_id
+                    int block_id
+                    string direction "inbound/outbound"
+                    text content
+                    datetime created_at
+                }
+
+                BLOCKS ||--o{ USER_SESSIONS : "находится в"
+                BOT_USERS ||--o{ USER_SESSIONS : "имеет"
+                BOT_USERS ||--o{ USER_PARAMS : "имеет"
+                BOT_USERS ||--o{ TRACE : "генерирует"
+            </pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>5. Диаграмма последовательности (Sequence Diagram)</h2>
+        <p>Процесс обработки одного сообщения от пользователя.</p>
+        <div class="diagram-container">
+            <pre class="mermaid">
+            sequenceDiagram
+                actor User
+                participant TG as Telegram
+                participant Bot as Bot Engine
+                participant DB as Database
+                participant Script as Python Exec
+
+                User->>TG: Привет (Message)
+                TG->>Bot: Webhook Update
+                Bot->>DB: Get UserSession(user_id)
+                alt Сессия не найдена
+                    DB-->>Bot: None
+                    Bot->>DB: Get StartBlock
+                    Bot->>DB: Create Session
+                else Сессия существует
+                    DB-->>Bot: CurrentBlockID
+                end
+                
+                Bot->>DB: Get Block Code
+                DB-->>Bot: script_code
+                
+                Bot->>Script: exec(code, context)
+                activate Script
+                Note over Script: Обработка input_text,<br/>проверка условий,<br/>вызов send_message
+                Script-->>Bot: Result (New State)
+                deactivate Script
+                
+                Bot->>TG: Send Reply
+                Bot->>DB: Update Session (New Block ID)
+                Bot->>DB: Insert Trace (Log)
+                TG->>User: Ответ бота
+            </pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>6. Прототипы интерфейса (UI Prototypes)</h2>
+
+        <h3>6.1. Редактор сценариев</h3>
+        <div class="prototype">
+            <div class="proto-screen">
+                <div class="proto-header">
+                    <span>Admin Panel / Workflow</span>
+                    <div>
+                        <button class="proto-btn">Save</button>
+                        <button class="proto-btn" style="background:#e74c3c">Exit</button>
+                    </div>
+                </div>
+                <div style="display:flex; height:100%;">
+                    <div class="proto-sidebar">
+                        <h4>Toolbox</h4>
+                        <div class="proto-card">Msg Block</div>
+                        <div class="proto-card">Input Block</div>
+                        <div class="proto-card">Logic Block</div>
+                    </div>
+                    <div class="proto-main"
+                        style="background:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNjY2MiLz48L3N2Zz4=');">
+                        <!-- Simulated Nodes -->
+                        <div
+                            style="position:absolute; top:50px; left:50px; width:150px; background:white; border:2px solid #3498db; border-radius:5px; padding:10px;">
+                            <strong>Start</strong>
+                            <hr>
+                            <small>greetings...</small>
+                        </div>
+                        <div
+                            style="position:absolute; top:150px; left:250px; width:150px; background:white; border:2px solid #3498db; border-radius:5px; padding:10px;">
+                            <strong>Ask Name</strong>
+                            <hr>
+                            <small>input = ...</small>
+                        </div>
+                        <!-- Simulated Connection -->
+                        <svg style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;">
+                            <path d="M 125 100 Q 125 150 250 180" stroke="#333" stroke-width="2" fill="none"
+                                marker-end="url(#arrow)" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <p><em>Интерактивный редактор на Canvas/JSPlumb. Позволяет перетаскивать блоки и соединять их.</em></p>
+        </div>
+
+        <h3>6.2. Мониторинг диалогов (Trace)</h3>
+        <div class="prototype">
+            <div class="proto-screen" style="height:300px;">
+                <div class="proto-header">
+                    <span>Live Trace</span>
+                    <input type="text" placeholder="Search user..." style="padding:2px;">
+                </div>
+                <div class="proto-main">
+                    <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                        <tr style="background:#eee; text-align:left;">
+                            <th style="padding:5px;">Time</th>
+                            <th style="padding:5px;">User</th>
+                            <th style="padding:5px;">Direction</th>
+                            <th style="padding:5px;">Message</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:5px;">10:01</td>
+                            <td style="padding:5px;">@durov</td>
+                            <td style="padding:5px;"><span style="color:green">IN</span></td>
+                            <td style="padding:5px;">/start</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:5px;">10:01</td>
+                            <td style="padding:5px;">Bot</td>
+                            <td style="padding:5px;"><span style="color:blue">OUT</span></td>
+                            <td style="padding:5px;">Welcome!</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

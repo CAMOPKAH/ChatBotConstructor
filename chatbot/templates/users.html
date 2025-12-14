@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>User Management</h2>
+
+<div class="card mb-4">
+    <div class="card-header">Create User</div>
+    <div class="card-body">
+        <form action="/users/create" method="post" class="row g-3">
+            <div class="col-auto">
+                <input type="text" name="user_id" class="form-control" placeholder="User ID" required>
+            </div>
+            <div class="col-auto">
+                <select name="platform" class="form-select">
+                    <option value="telegram">Telegram</option>
+                    <option value="vk">VK</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Add User</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Platform</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.user_id }}</td>
+            <td>{{ user.platform }}</td>
+            <td>
+                {% if user.is_active %}
+                <span class="badge bg-success">Active</span>
+                {% else %}
+                <span class="badge bg-danger">Inactive</span>
+                {% endif %}
+            </td>
+            <td>{{ user.created_at }}</td>
+            <td>
+                <form action="/users/{{ user.id }}/toggle" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-warning">Toggle</button>
+                </form>
+                <form action="/users/{{ user.id }}/delete" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
