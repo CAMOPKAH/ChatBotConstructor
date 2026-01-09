@@ -107,7 +107,7 @@ assistant_instance = None
 
 def init():
     global assistant_instance
-    auth_key = "YzhmYTU0ODAtNDJhYy00NDQyLWE3MTQtMTA4YTZjY2ExMThkOjUxZjhjODhjLWYwNjYtNDQzNS1iYzMxLTI1Mjg3ZWEyYjBjOA=="
+    auth_key = "YzhmYTU0ODAtNDJhYxLTI1Mjg3ZWEyYjBjOA=="
     
     # Path relative to this file
     base_dir = os.path.dirname(os.path.abspath(__file__))
